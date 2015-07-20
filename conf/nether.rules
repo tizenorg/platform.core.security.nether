@@ -1,17 +1,11 @@
 # nether iptables rules
-*nat
-:PREROUTING ACCEPT [214977:18048203]
-:INPUT ACCEPT [24506:3910785]
-:OUTPUT ACCEPT [46836:3016993]
-:POSTROUTING ACCEPT [45527:2930737]
-COMMIT
 *mangle
 :PREROUTING ACCEPT [1008811:2134498122]
 :INPUT ACCEPT [948545:2129919738]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [816152:74580343]
 :POSTROUTING ACCEPT [824147:75308906]
--A OUTPUT -p tcp -m state --state NEW -m tcp --dport 443 -j NFQUEUE --queue-num 0 --queue-bypass
+-A OUTPUT -p tcp -j NFQUEUE --queue-num 0 --queue-bypass
 -A OUTPUT -p udp -j NFQUEUE --queue-num 0 --queue-bypass
 -A OUTPUT -p icmp -j NFQUEUE --queue-num 0 --queue-bypass
 COMMIT

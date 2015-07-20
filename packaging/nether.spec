@@ -9,6 +9,7 @@ Summary:        Daemon for enforcing network privileges
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  libnetfilter_queue-devel
+BuildRequires:  pkgconfig(cynara-client-async)
 Requires:       iptables
 
 %description
@@ -17,13 +18,13 @@ between them. A process from inside a zone can request a switch of context
 (display, input devices) to the other zone.
 
 %files
-%manifest packaging/nether.manifest
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/nether
-%dir /etc/nether
-%config /etc/nether/nether.policy
-%config /etc/nether/setrules.sh
-%config /etc/nether/nether.rules
+%dir %{_sysconfdir}/nether
+%config %{_sysconfdir}/nether/nether.policy
+%config %{_sysconfdir}/nether/nether.rules
+%{_unitdir}/nether.service
+%{_unitdir}/multi-user.target.wants/nether.service
 %prep
 %setup -q
 
@@ -36,9 +37,11 @@ between them. A process from inside a zone can request a switch of context
 %endif
 
 %cmake . -DVERSION=%{version} \
-         -DCMAKE_BUILD_TYPE=%{build_type} \
-         -DSCRIPT_INSTALL_DIR=%{script_dir} \
-         -DSYSTEMD_UNIT_DIR=%{_unitdir}
+        -DCMAKE_BUILD_TYPE=%{build_type} \
+        -DSYSTEMD_UNIT_DIR=%{_unitdir} \
+	-DBIN_INSTALL_DIR=%{_bindir} \
+	-DSYSCONF_INSTALL_DIR=%{_sysconfdir}
+
 make -k %{?jobs:-j%jobs}
 
 %install

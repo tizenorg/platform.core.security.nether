@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Contact: Roman Kubiak (r.kubiak@samsung.com)
  *
@@ -67,6 +67,27 @@ const bool NetherManager::initialize()
         LOGE("Failed acquire signalfd descriptor");
         return (false);
     }
+
+#ifdef HAVE_AUDIT
+    if (netherConfig.enableAudit)
+    {
+        if ( (auditDescriptor = audit_open ()) == -1)
+        {
+            LOGE("Failed to open an audit netlink socket: " << strerror(errno));
+            return (false);
+        }
+
+        if (audit_set_enabled (auditDescriptor, 1) <= 0)
+        {
+            LOGE("Failed to enable auditing: " << strerror(errno));
+            return (false);
+        }
+        else
+        {
+            LOGD("Auditing enabled");
+        }
+    }
+#endif // HAVE_AUDIT
 
     if (!netherNetlink->initialize())
     {

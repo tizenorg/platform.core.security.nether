@@ -20,7 +20,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
-				<Option parameters="-B /etc/nether.policy -l stderr" />
+				<Option parameters="-B /etc/nether.policy -l stderr -a 1" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-Wfatal-errors" />
@@ -29,6 +29,7 @@
 					<Add option="-g" />
 					<Add option="-DHAVE_CYNARA" />
 					<Add option="-D_DEBUG" />
+					<Add option="-DHAVE_AUDIT" />
 					<Add directory="include" />
 					<Add directory="/usr/local/include/cynara" />
 				</Compiler>
@@ -37,6 +38,7 @@
 					<Add library="libnfnetlink" />
 					<Add library="libcynara-client-async" />
 					<Add library="libcynara-commons" />
+					<Add library="libaudit" />
 					<Add directory="/usr/local/lib" />
 				</Linker>
 				<MakeCommands>

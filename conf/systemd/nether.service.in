@@ -1,0 +1,11 @@
+[Unit]
+Description=nether service
+
+[Service]
+Type=simple
+ExecStart=${CMAKE_INSTALL_PREFIX}/bin/nether
+Restart=on-failure
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
