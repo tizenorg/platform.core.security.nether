@@ -34,11 +34,14 @@ namespace logger {
  */
 class StderrBackend : public LogBackend {
 public:
+    StderrBackend(const bool useColours = true) : mUseColours(useColours) {}
     void log(LogLevel logLevel,
              const std::string& file,
              const unsigned int& line,
              const std::string& func,
              const std::string& message) override;
+private:
+    bool mUseColours;
 };
 
 } // namespace logger
