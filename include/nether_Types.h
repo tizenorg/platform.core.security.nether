@@ -72,6 +72,12 @@
 #define NETHER_BACKUP_BACKEND           NetherPolicyBackendType::dummyBackend
 #endif // HAVE_CYNARA
 
+#if defined(COPY_PACKETS)
+#define NETLINK_COPY_PACKETS			1
+#else
+#define NETLINK_COPY_PACKETS			0
+#endif // COPY_PACKETS
+
 #define NETHER_DEFAULT_VERDICT          NetherVerdict::allowAndLog
 #define NETHER_PACKET_BUFFER_SIZE       4096
 #define NETHER_INVALID_UID              (uid_t) -1
@@ -171,6 +177,7 @@ struct NetherConfig
 	int queueNumber                             = 0;
 	int enableAudit                             = 0;
 	int noRules                                 = 0;
+	int copyPackets								= NETLINK_COPY_PACKETS;
 	std::string backupBackendArgs               = NETHER_POLICY_FILE;
 	std::string primaryBackendArgs;
 	std::string logBackendArgs;
