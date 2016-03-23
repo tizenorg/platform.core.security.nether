@@ -19,6 +19,7 @@ This is a network privilege enforcing service.
 %dir %{_sysconfdir}/nether
 %config %{_sysconfdir}/nether/nether.policy
 %config %{_sysconfdir}/nether/nether.rules
+%config %{_sysconfdir}/nether/cynara.policy
 %{_unitdir}/nether.service
 %{_unitdir}/multi-user.target.wants/nether.service
 %prep

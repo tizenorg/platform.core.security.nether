@@ -16,14 +16,24 @@
 #  limitations under the License
 #
 
-[Unit]
-Description=nether service
+# this is the normal, global INTERNET
+# privilege, connections that are granted
+# this privilege do net get marked, and
+# are passed through with no additional
+# activity
+#
+# if this privilege is granted no additional
+# privileges are checked
+http://tizen.org/privilege/internet
 
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/nether -d -l JOURNAL -B /etc/nether/nether.policy -r /etc/nether/nether.rules
-Restart=on-failure
-ExecReload=/bin/kill -HUP $MAINPID
+# this is an additional privilege
+# if the normal (first) privielege is not
+# granted, all additional ones are checked
+# these get a special packet mark
+# so that connections matching only this
+# specific privilege are passed to a
+# specific chain (0xfe)
+http://tizen.org/privilege/debug|0x0a
 
-[Install]
-WantedBy=multi-user.target
+# another additional privilege
+http://tizen.org/privilege/joey|0x0b

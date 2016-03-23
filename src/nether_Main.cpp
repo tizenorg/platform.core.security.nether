@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 
 	if(netherConfig.daemonMode)
 	{
-		LOGD("FORKING TO BACKGROUND");
+		LOGD("Running in background, fork()");
 		if(!runAsDaemon())
 		{
 			LOGE("Failed to run as daemon: " << strerror(errno));
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		LOGD("RUNNING IF FOREGROUND");
+		LOGD("Running in foreground");
 		manager.process();
 	}
 
@@ -249,7 +249,7 @@ void showHelp(char *arg)
 	cout<< "  -x,--no-rules\t\t\t\tDon't load iptables rules on start (default:no)\n";
 	cout<< "  -c,--copy-packets\t\t\tCopy entire packets, needed to read TCP/IP information (default:no)\n";
 	cout<< "  -I,--interface-info\t\t\tGet interface info for every packet (default:no)\n";
-	cout<< "  -R,--relaxed\t\t\t\tRun in relaxed mode, instrad of deny do ACCEPT_LOG(default:no)\n";
+	cout<< "  -R,--relaxed\t\t\t\tRun in relaxed mode, instead of deny do ACCEPT_LOG(default:no)\n";
 	cout<< "  -l,--log=<backend>\t\t\tSet logging backend STDERR,SYSLOG";
 #if defined(HAVE_SYSTEMD_JOURNAL)
 	cout << ",JOURNAL\n";
