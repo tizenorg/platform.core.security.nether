@@ -78,6 +78,6 @@ TARGET_LINK_LIBRARIES (nether
 )
 
 ADD_DEFINITIONS (-DNETHER_RULES_PATH="${CMAKE_INSTALL_DIR}/etc/nether/nether.rules"
-		-DNETHER_POLICY_FILE="${CMAKE_INSTALL_DIR}/etc/nether/nether.policy")
+		-DNETHER_POLICY_FILE="${CMAKE_INSTALL_DIR}/etc/nether/file.policy")
 
 INSTALL (TARGETS nether RUNTIME DESTINATION bin)
