@@ -40,7 +40,7 @@
 class NetherManager;
 
 const std::string cynaraErrorCodeToString(int cynaraErrorCode);
-typedef std::pair<std::string, u_int32_t> PrivilegePair;
+typedef std::pair<std::string, int32_t> PrivilegePair;
 
 struct NetherCynaraCheckInfo
 {
