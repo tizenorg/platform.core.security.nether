@@ -27,7 +27,7 @@
 
 using namespace std;
 
-// #ifdef HAVE_CYNARA
+#ifdef HAVE_CYNARA
 
 const std::string cynaraErrorCodeToString(int cynaraErrorCode)
 {
@@ -45,13 +45,15 @@ NetherCynaraBackend::NetherCynaraBackend(const NetherConfig &netherConfig)
 		cynaraLastResult(CYNARA_API_UNKNOWN_ERROR), cynaraConfig(nullptr),
 		allPrivilegesToCheck(1) /* if there is no additional policy, only one check is done */
 {
+	/* This is the default, if no policy is defined in the file or no
+		privilege name is passed in the command line, the built in
+		or the one defined at build time will be used
+		-1 is the mark that means, ACCEPT (don't mark the packet at all) */
+	privilegeChain.push_back (PrivilegePair (NETHER_CYNARA_INTERNET_PRIVILEGE, -1));
+
 	if (netherConfig.primaryBackendArgs.length() != 0)
 	{
 		parseBackendArgs();
-	}
-	else
-	{
-		privilegeChain.push_back (PrivilegePair (NETHER_CYNARA_INTERNET_PRIVILEGE, 0));
 	}
 }
 
@@ -167,8 +169,8 @@ bool NetherCynaraBackend::reEnqueVerdict(cynara_check_id checkId)
 {
 	NetherCynaraCheckInfo checkInfo = responseQueue[checkId];
 
-	/* We goa deny from cynara, we need to check
-		if our internal (BAD, SATANIC, EVIL) policy
+	/* We got deny from cynara, we need to check
+		if our internal policy
 		has other entries and try them too */
 	if (++checkInfo.privilegeId < allPrivilegesToCheck)
 	{
@@ -263,6 +265,12 @@ void NetherCynaraBackend::parseBackendArgs()
 		{
 			parseInternalPolicy (valueNamePair[1]);
 		}
+
+		if (valueNamePair[0] == "privname")
+		{
+			privilegeChain.clear();
+			privilegeChain.push_back (PrivilegePair (valueNamePair[1], -1));
+		}
 	}
 }
 
@@ -273,46 +281,50 @@ bool NetherCynaraBackend::parseInternalPolicy(const std::string &policyFile)
 
 	std::ifstream policyStream (policyFile);
 
-	if (policyStream.good())
+	if (!policyStream.good())
 	{
-		std::string s, privname, mark;
-		while (std::getline (policyStream,s))
-		{
-			std::string::size_type begin = s.find_first_not_of( " \f\t\v" );
-
-			// Skip blank lines
-			if (begin == std::string::npos) continue;
-
-			// Skip commentary
-			if (std::string( "#;" ).find( s[ begin ] ) != std::string::npos) continue;
-
-			// Extract the key value
-			std::string::size_type end = s.find( '|', begin );
-			privname = s.substr( begin, end - begin );
-
-			// (No leading or trailing whitespace allowed)
-			privname.erase( privname.find_last_not_of( " \f\t\v" ) + 1 );
-
-			// No blank keys allowed
-			if (privname.empty()) continue;
-
-			// Extract the value (no leading or trailing whitespace allowed)
-			begin = s.find_first_not_of( " \f\n\r\t\v", end + 1 );
-			end   = s.find_last_not_of(  " \f\n\r\t\v" ) + 1;
-			mark = s.substr( begin, end - begin );
-
-			// Insert the properly extracted (key, value) pair into the map
-			std::cout << mark;
-			privilegeChain.push_back(PrivilegePair(privname, std::stoi(mark, 0, 16)));
-		}
-
-		allPrivilegesToCheck = privilegeChain.size();
-		return (true);
-	}
-	else
-	{
-		LOGE("Cynara policy file: " << policyFile << " failed to open");
+		LOGE("Cynara policy file: " << policyFile << " failed to open. Using default privilege: \""
+									<< privilegeChain[0].first << "\" for security checks");
 		return (false);
 	}
+
+	std::string s, privname, mark;
+	while (std::getline (policyStream,s))
+	{
+		std::string::size_type begin = s.find_first_not_of( " \f\t\v" );
+
+		// Skip blank lines
+		if (begin == std::string::npos) continue;
+
+		// Skip commentary
+		if (std::string( "#;" ).find( s[ begin ] ) != std::string::npos) continue;
+
+		// Extract the key value
+		std::string::size_type end = s.find( '|', begin );
+		privname = s.substr( begin, end - begin );
+
+		// (No leading or trailing whitespace allowed)
+		privname.erase( privname.find_last_not_of( " \f\t\v" ) + 1 );
+
+		// No blank keys allowed
+		if (privname.empty()) continue;
+
+		// Extract the value (no leading or trailing whitespace allowed)
+		begin = s.find_first_not_of( " \f\n\r\t\v", end + 1 );
+		end   = s.find_last_not_of(  " \f\n\r\t\v" ) + 1;
+		mark = s.substr( begin, end - begin );
+
+		// Insert the properly extracted (key, value) pair into the map
+		LOGD("cynara policy add privilege: " << privname << " mark:" << mark);
+		privilegeChain.push_back(PrivilegePair(privname, std::stoi(mark, 0, 16)));
+	}
+
+	/* In case we didn't get at least ONE privilege from the file
+		fall back to default */
+	if (privilegeChain.size() == 0)
+		privilegeChain.push_back (PrivilegePair (NETHER_CYNARA_INTERNET_PRIVILEGE, -1));
+
+	allPrivilegesToCheck = privilegeChain.size();
+	return (true);
 }
-// #endif
+#endif
