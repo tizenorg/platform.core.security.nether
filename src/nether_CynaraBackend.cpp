@@ -45,13 +45,15 @@ NetherCynaraBackend::NetherCynaraBackend(const NetherConfig &netherConfig)
 		cynaraLastResult(CYNARA_API_UNKNOWN_ERROR), cynaraConfig(nullptr),
 		allPrivilegesToCheck(1) /* if there is no additional policy, only one check is done */
 {
+	/* This is the default, if no policy is defined in the file or no
+		privilege name is passed in the command line, the built in
+		or the one defined at build time will be used
+		-1 is the mark that means, ACCEPT (don't mark the packet at all) */
+	privilegeChain.push_back (PrivilegePair (NETHER_CYNARA_INTERNET_PRIVILEGE, -1));
+
 	if (netherConfig.primaryBackendArgs.length() != 0)
 	{
 		parseBackendArgs();
-	}
-	else
-	{
-		privilegeChain.push_back (PrivilegePair (NETHER_CYNARA_INTERNET_PRIVILEGE, 0));
 	}
 }
 
@@ -263,6 +265,12 @@ void NetherCynaraBackend::parseBackendArgs()
 		{
 			parseInternalPolicy (valueNamePair[1]);
 		}
+
+		if (valueNamePair[0] == "privname")
+		{
+			privilegeChain.clear();
+			privilegeChain.push_back (PrivilegePair (valueNamePair[1], -1));
+		}
 	}
 }
 
@@ -302,7 +310,7 @@ bool NetherCynaraBackend::parseInternalPolicy(const std::string &policyFile)
 			mark = s.substr( begin, end - begin );
 
 			// Insert the properly extracted (key, value) pair into the map
-			std::cout << mark;
+			LOGD("cynara policy add privilege: " << privname << " mark:" << mark);
 			privilegeChain.push_back(PrivilegePair(privname, std::stoi(mark, 0, 16)));
 		}
 
@@ -311,7 +319,8 @@ bool NetherCynaraBackend::parseInternalPolicy(const std::string &policyFile)
 	}
 	else
 	{
-		LOGE("Cynara policy file: " << policyFile << " failed to open");
+		LOGE("Cynara policy file: " << policyFile << " failed to open. Using default privilege: \""
+									<< privilegeChain[0].first << "\" for security checks");
 		return (false);
 	}
 }
