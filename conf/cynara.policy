@@ -24,7 +24,7 @@
 #
 # if this privilege is granted no additional
 # privileges are checked
-http://tizen.org/privilege/internet
+http://tizen.org/privilege/internet|0x0
 
 # this is an additional privilege
 # if the normal (first) privielege is not

@@ -54,7 +54,7 @@ if [ $1 == 1 ]; then
 	systemctl start nether.service || :
 fi
 if [ $1 == 2 ]; then
-	systemct restart nether.service || :
+	systemctl restart nether.service || :
 fi
 
 %preun
