@@ -114,6 +114,7 @@ void decodeIPv4Packet(NetherPacket &packet, unsigned char *payload)
 			break;
 		case IPPROTO_IGMP:
 			packet.transportType = NetherTransportType::IGMP;
+			break;
 		default:
 			packet.transportType = NetherTransportType::unknownTransportType;
 			break;
