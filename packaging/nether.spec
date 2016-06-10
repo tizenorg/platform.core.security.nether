@@ -20,8 +20,8 @@ This is a network privilege enforcing service.
 %config %{_sysconfdir}/nether/file.policy
 %config %{_sysconfdir}/nether/nether.rules
 %config %{_sysconfdir}/nether/cynara.policy
-%{_unitdir}/nether.service
-%{_unitdir}/multi-user.target.wants/nether.service
+#%{_unitdir}/nether.service
+#%{_unitdir}/multi-user.target.wants/nether.service
 %prep
 %setup -q
 
@@ -50,19 +50,19 @@ rm -rf %{buildroot}
 %post
 # Refresh systemd services list after installation
 systemctl daemon-reload || :
-if [ $1 == 1 ]; then
-	systemctl start nether.service || :
-fi
-if [ $1 == 2 ]; then
-	systemctl restart nether.service || :
-fi
+#if [ $1 == 1 ]; then
+#	systemctl start nether.service || :
+#fi
+#if [ $1 == 2 ]; then
+#	systemctl restart nether.service || :
+#fi
 
 %preun
 # Stop the service before uninstall
-if [ $1 == 0 ]; then
-	systemctl stop nether.service || :
-fi
+#if [ $1 == 0 ]; then
+#	systemctl stop nether.service || :
+#fi
 
 %postun
 # Refresh systemd services list after uninstall/upgrade
-systemctl daemon-reload || :
+#systemctl daemon-reload || :
