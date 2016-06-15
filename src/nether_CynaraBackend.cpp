@@ -43,7 +43,7 @@ const std::string cynaraErrorCodeToString(int cynaraErrorCode)
 }
 
 NetherCynaraBackend::NetherCynaraBackend(const NetherConfig &netherConfig)
-	:   NetherPolicyBackend(netherConfig), currentCynaraDescriptor(0),
+	:   NetherPolicyBackend(netherConfig), currentCynaraDescriptor(-1),
 		cynaraLastResult(CYNARA_API_UNKNOWN_ERROR), cynaraConfig(nullptr),
 		allPrivilegesToCheck(1) /* if there is no additional policy, only one check is done */
 {
