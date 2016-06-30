@@ -15,7 +15,8 @@ This is a network privilege enforcing service.
 
 %files
 %defattr(644,root,root,755)
-%caps(cap_sys_admin,cap_mac_override=ei) %attr(755,root,root) %{_bindir}/nether
+#%caps(cap_sys_admin,cap_mac_override=ei) 
+%attr(755,root,root) %{_bindir}/nether
 %dir %{_sysconfdir}/nether
 %config %{_sysconfdir}/nether/file.policy
 %config %{_sysconfdir}/nether/nether.rules
