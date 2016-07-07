@@ -24,8 +24,8 @@ Type=simple
 ExecStart=${CMAKE_INSTALL_PREFIX}/bin/nether -l JOURNAL -P policy=${SYSCONF_INSTALL_DIR}/nether/cynara.policy -B ${SYSCONF_INSTALL_DIR}/nether/file.policy -r ${SYSCONF_INSTALL_DIR}/nether/nether.rules
 Restart=on-failure
 ExecReload=/bin/kill -HUP $MAINPID
-User=[security_fw]
-Group=[security_fw]
+User=security_fw
+Group=security_fw
 
 [Install]
 WantedBy=multi-user.target
