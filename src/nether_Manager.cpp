@@ -22,6 +22,8 @@
  * @brief   Manager class implementation for nether
  */
 
+#include <sys/wait.h>
+
 #include "nether_Manager.h"
 #include "nether_CynaraBackend.h"
 #include "nether_FileBackend.h"
@@ -328,15 +330,30 @@ bool NetherManager::restoreRules()
 		return (false);
 	}
 
-	std::stringstream cmdline;
-	cmdline << netherConfig.iptablesRestorePath;
-	cmdline << " ";
-	cmdline << netherConfig.rulesPath;
+	const char *argv[] = { netherConfig.iptablesRestorePath.c_str(),
+			netherConfig.rulesPath.c_str(), nullptr };
 
-	if(system(cmdline.str().c_str()))
-	{
-		LOGE("system() failed for: " << cmdline.str());
-		return (false);
+	pid_t pid;
+	int status;
+
+	if ((pid = fork()) == 0) {
+		execve(argv[0], const_cast<char* const*>(argv), nullptr);
+
+		LOGE("execve() failed for: " << argv << " " << strerror(errno));
+		return false;
+	} else if (pid < -1) {
+		LOGE("Failed to fork process");
+		return false;
+	} else {
+		do {
+			int ret;
+			ret = wait(&status);
+
+			if (ret == -1) {
+				LOGE("wait() failed");
+				return false;
+			}
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 
 	LOGD("iptables-restore succeeded with rules from: " << netherConfig.rulesPath);
