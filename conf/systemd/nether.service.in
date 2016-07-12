@@ -26,6 +26,9 @@ Restart=on-failure
 ExecReload=/bin/kill -HUP $MAINPID
 User=security_fw
 Group=security_fw
+SecureBits=keep-caps
+Capabilities=cap_net_admin,cap_net_raw=eip
+CapabilityBoundingSet=CAP_NET_RAW CAP_NET_ADMIN
 
 [Install]
 WantedBy=multi-user.target
