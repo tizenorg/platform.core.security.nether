@@ -45,7 +45,7 @@ NetherManager::NetherManager(const NetherConfig &_netherConfig)
 	netherFallbackPolicyBackend = std::unique_ptr<NetherPolicyBackend> (new NetherDummyBackend(netherConfig));
 }
 
-NetherManager::~NetherManager()
+NetherManager::~NetherManager() noexcept(true)
 {
 	close(signalDescriptor);
 }
