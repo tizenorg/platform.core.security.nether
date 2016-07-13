@@ -134,7 +134,7 @@ void decodeUdp(NetherPacket &packet, unsigned char *payload)
 
 }
 
-std::string ipAddressToString(const char *src, enum NetherProtocolType type)
+std::string ipAddressToString(const char *src, NetherProtocolType type)
 {
 	switch(type)
 	{
