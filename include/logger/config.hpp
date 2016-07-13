@@ -50,13 +50,13 @@
 #endif // _GLIBCXX_USE_SCHED_YIELD
 #endif // GCC_VERSION < 40800
 
-#if GCC_VERSION < 40700
-// Those appeared in 4.7 with full c++11 support
+#if GCC_VERSION < 40800
+// Those appeared in 4.8 with full c++11 support
 #define final
 #define override
 #define thread_local __thread  // use GCC extension instead of C++11
 #define steady_clock monotonic_clock
-#endif // GCC_VERSION < 40700
+#endif // GCC_VERSION < 40800
 
 #endif // GCC_VERSION
 
