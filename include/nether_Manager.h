@@ -34,7 +34,7 @@ class NetherManager : public NetherVerdictListener, public NetherProcessedPacket
 {
 	public:
 		NetherManager(const NetherConfig &_netherConfig);
-		~NetherManager();
+		~NetherManager() noexcept(true);
 		bool initialize();
 		bool process();
 		NetherConfig &getConfig();
