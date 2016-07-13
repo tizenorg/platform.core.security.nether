@@ -32,7 +32,7 @@ void decodeIPv4Packet(NetherPacket &packet, unsigned char *payload);
 void decodeIPv6Packet(NetherPacket &packet, unsigned char *payload);
 void decodeTcp(NetherPacket &packet, unsigned char *payload);
 void decodeUdp(NetherPacket &packet, unsigned char *payload);
-std::string ipAddressToString(const char *src, enum NetherProtocolType type);
+std::string ipAddressToString(const char *src, NetherProtocolType type);
 
 NetherVerdict stringToVerdict(char *verdictAsString);
 NetherPolicyBackendType stringToBackendType(char *backendAsString);
