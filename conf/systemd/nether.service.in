@@ -29,6 +29,7 @@ Group=security_fw
 SecureBits=keep-caps
 Capabilities=cap_net_admin,cap_net_raw=eip
 CapabilityBoundingSet=CAP_NET_RAW CAP_NET_ADMIN
+SmackProcessLabel=System
 
 [Install]
 WantedBy=multi-user.target
