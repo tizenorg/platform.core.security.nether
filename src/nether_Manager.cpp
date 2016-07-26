@@ -136,32 +136,33 @@ bool NetherManager::process()
 
 	for(;;)
 	{
-		setupSelectSockets(watchedReadDescriptorsSet, watchedWriteDescriptorsSet, timeoutSpecification);
+		setupSelectSockets(watchedReadDescriptorsSet,
+				watchedWriteDescriptorsSet, timeoutSpecification);
 
-		if(select(FD_SETSIZE, &watchedReadDescriptorsSet, &watchedWriteDescriptorsSet, NULL, &timeoutSpecification) < 0)
-		{
-			LOGE("select error " << strerror(errno));
-			return (false);
+		int ret = TEMP_FAILURE_RETRY(select(FD_SETSIZE, &watchedReadDescriptorsSet,
+				&watchedWriteDescriptorsSet, NULL, &timeoutSpecification));
+
+		if (ret < 0) {
+			int err = errno;
+			LOGE("select error" << strerror(err));
+			return false;
+		} else if (ret == 0) {
+			LOGD("select() timeout");
+			continue;
 		}
 
 		if(FD_ISSET(signalDescriptor, &watchedReadDescriptorsSet))
-		{
 			handleSignal();
-		}
+
 		if(FD_ISSET(netlinkDescriptor, &watchedReadDescriptorsSet))
-		{
 			if(!handleNetlinkpacket())
 				break;
-		}
-		else
-			if(FD_ISSET(backendDescriptor, &watchedReadDescriptorsSet) || FD_ISSET(backendDescriptor, &watchedWriteDescriptorsSet))
-			{
-				netherPrimaryPolicyBackend->processEvents();
-			}
-			else
-			{
-				LOGD("select() timeout");
-			}
+
+		if (backendDescriptor == -1)
+			continue;
+		if (FD_ISSET(backendDescriptor, &watchedReadDescriptorsSet) ||
+				FD_ISSET(backendDescriptor, &watchedWriteDescriptorsSet))
+			netherPrimaryPolicyBackend->processEvents();
 	}
 
 	return (true);
